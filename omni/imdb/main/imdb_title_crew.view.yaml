@@ -1,0 +1,12 @@
+# Reference this view as main__imdb_title_crew
+schema: main
+table_name: imdb_title_crew
+
+dimensions:
+  tconst: {}
+  directors: {}
+  writers: {}
+
+measures:
+  count:
+    aggregate_type: count

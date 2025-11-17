@@ -1,0 +1,32 @@
+# Reference this view as main__imdb_title_basics
+schema: main
+table_name: imdb_title_basics
+
+dimensions:
+  tconst: {}
+  genres: {}
+
+  title_type:
+    sql: '"titleType"'
+
+  primary_title:
+    sql: '"primaryTitle"'
+
+  original_title:
+    sql: '"originalTitle"'
+
+  is_adult:
+    sql: '"isAdult"'
+
+  start_year:
+    sql: '"startYear"'
+
+  end_year:
+    sql: '"endYear"'
+
+  runtime_minutes:
+    sql: '"runtimeMinutes"'
+
+measures:
+  count:
+    aggregate_type: count

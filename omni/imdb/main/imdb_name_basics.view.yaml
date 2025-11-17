@@ -1,0 +1,27 @@
+# Reference this view as main__imdb_name_basics
+label: Names
+
+schema: main
+table_name: imdb_name_basics
+
+dimensions:
+  nconst: {}
+
+  primary_name:
+    sql: '"primaryName"'
+
+  birth_year:
+    sql: '"birthYear"'
+
+  death_year:
+    sql: '"deathYear"'
+
+  primary_profession:
+    sql: '"primaryProfession"'
+
+  known_for_titles:
+    sql: '"knownForTitles"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,22 @@
+# Reference this view as main__imdb_title_akas
+schema: main
+table_name: imdb_title_akas
+
+dimensions:
+  ordering: {}
+  title: {}
+  region: {}
+  language: {}
+  types: {}
+  attributes: {}
+
+  title_id:
+    sql: '"titleId"'
+    format: ID
+
+  is_original_title:
+    sql: '"isOriginalTitle"'
+
+measures:
+  count:
+    aggregate_type: count

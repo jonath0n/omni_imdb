@@ -1,0 +1,19 @@
+# Reference this view as main__imdb_title_episode
+schema: main
+table_name: imdb_title_episode
+
+dimensions:
+  tconst: {}
+
+  parent_tconst:
+    sql: '"parentTconst"'
+
+  season_number:
+    sql: '"seasonNumber"'
+
+  episode_number:
+    sql: '"episodeNumber"'
+
+measures:
+  count:
+    aggregate_type: count

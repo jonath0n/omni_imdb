@@ -1,0 +1,15 @@
+# Reference this view as main__imdb_title_principals
+schema: main
+table_name: imdb_title_principals
+
+dimensions:
+  tconst: {}
+  ordering: {}
+  nconst: {}
+  category: {}
+  job: {}
+  characters: {}
+
+measures:
+  count:
+    aggregate_type: count
