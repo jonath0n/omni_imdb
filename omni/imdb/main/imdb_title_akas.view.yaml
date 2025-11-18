@@ -14,8 +14,7 @@ dimensions:
     sql: '"titleId"'
     format: ID
     description: comment has field name in it- title_id
-    # description: comment has field name in it- title_id
-
+    # comment
 
   is_original_title:
     sql: '"isOriginalTitle"'
