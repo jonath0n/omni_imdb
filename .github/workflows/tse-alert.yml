@@ -26,7 +26,6 @@ jobs:
           # but for env vars, we use the specific ${{ env.VAR }} syntax which helps.
           payload: |
             {
-              "text": "TSE Review Requested: ${{ env.ISSUE_URL }}",
               "blocks": [
                 {
                   "type": "section",
