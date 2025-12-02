@@ -13,16 +13,26 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          # We map the unsafe variables to ENV vars here.
+          # The Action will safely read these into the payload.
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          SENDER: ${{ github.event.sender.login }}
+          AUTHOR: ${{ github.event.issue.user.login }}
+          GROUP_ID: "S0A12AJGEMU"
         with:
+          # We construct the JSON using the env variables we just defined.
+          # Note: We must escaping quotes in the JSON template itself if needed,
+          # but for env vars, we use the specific ${{ env.VAR }} syntax which helps.
           payload: |
             {
-              "text": "TSE Review Requested: ${{ github.event.issue.html_url }}",
+              "text": "TSE Review Requested: ${{ env.ISSUE_URL }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":rotating_light: *TSE Review Requested* <!subteam^S0A12AJGEMU>"
+                    "text": ":rotating_light: *TSE Review Requested* <!subteam^${{ env.GROUP_ID }}>"
                   }
                 },
                 {
@@ -32,7 +42,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Issue:* <${{ github.event.issue.html_url }}|${{ toJSON(github.event.issue.title) }}>"
+                    "text": "*Issue:* <${{ env.ISSUE_URL }}|${{ env.ISSUE_TITLE }}>"
                   }
                 },
                 {
@@ -40,11 +50,11 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Requested By:*\n${{ github.event.sender.login }}"
+                      "text": "*Requested By:*\n${{ env.SENDER }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Author:*\n${{ github.event.issue.user.login }}"
+                      "text": "*Author:*\n${{ env.AUTHOR }}"
                     }
                   ]
                 }
