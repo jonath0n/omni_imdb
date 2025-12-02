@@ -28,8 +28,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ":rotating_light: *TSE Review Requested* <!subteam^${{ env.GROUP_ID }}> 
-                            \n"*Issue:* <${{ env.ISSUE_URL }}|${{ env.ISSUE_TITLE }}>"
+                    "text": ":rotating_light: *TSE Review Requested* <!subteam^${{ env.GROUP_ID }}> \n"*Issue:* <${{ env.ISSUE_URL }}|${{ env.ISSUE_TITLE }}>"
                   }
                 },
                 {
