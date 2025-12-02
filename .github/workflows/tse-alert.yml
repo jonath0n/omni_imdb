@@ -12,18 +12,14 @@ jobs:
       - name: Send Slack Notification
         uses: slackapi/slack-github-action@v2.1.1
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          # We map the unsafe variables to ENV vars here.
-          # The Action will safely read these into the payload.
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
           SENDER: ${{ github.event.sender.login }}
           AUTHOR: ${{ github.event.issue.user.login }}
           GROUP_ID: "S0A12AJGEMU"
         with:
-          # We construct the JSON using the env variables we just defined.
-          # Note: We must escaping quotes in the JSON template itself if needed,
-          # but for env vars, we use the specific ${{ env.VAR }} syntax which helps.
+          webhook-type: incoming-webhook
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           payload: |
             {
               "text": "TSE Review Requested: <${{ env.ISSUE_TITLE }}|${{ env.ISSUE_URL }}>",
