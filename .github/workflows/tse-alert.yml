@@ -12,22 +12,22 @@ jobs:
       - name: Create Slack Payload
         id: slack_payload
         env:
-          # Your Group ID (Already correct based on your screenshot)
-          GROUP_ID: "S0A12AJGEMU" 
+          GROUP_ID: "S0A12AJGEMU"
           ISSUE_URL: ${{ github.event.issue.html_url }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
-          USER_LOGIN: ${{ github.event.issue.user.login }}
+          # The person who created the issue
+          AUTHOR_LOGIN: ${{ github.event.issue.user.login }}
+          # The person who added the label (The "Sender")
+          REVIEW_REQUESTER: ${{ github.event.sender.login }}
         run: |
-          # 1. We assume the title might have special characters, so we escape them for JSON
-          # 2. We construct the payload using jq
-          
           jq -n \
             --arg group "$GROUP_ID" \
             --arg title "$ISSUE_TITLE" \
             --arg url "$ISSUE_URL" \
-            --arg user "$USER_LOGIN" \
+            --arg author "$AUTHOR_LOGIN" \
+            --arg requester "$REVIEW_REQUESTER" \
             '{
-              # ADDED THE LINK SYNTAX HERE: <\($url)|\($title)>
+              # Link is added here for the fallback text
               text: "<!subteam^\($group)> Review Requested: <\($url)|\($title)>",
               blocks: [
                 {
@@ -41,7 +41,8 @@ jobs:
                   type: "section",
                   text: {
                     type: "mrkdwn",
-                    text: "*<\($url)|\($title)>*\nRequested by: \($user)"
+                    # Showing both the issue author and who asked for the review
+                    text: "*<\($url)|\($title)>*\nIssue Author: \($author)\nReview Requested by: \($requester)"
                   }
                 }
               ]
