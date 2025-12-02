@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Slack Notification
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v2.1.1
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           # We map the unsafe variables to ENV vars here.
@@ -26,7 +26,7 @@ jobs:
           # but for env vars, we use the specific ${{ env.VAR }} syntax which helps.
           payload: |
             {
-              "text": "TSE Review Requested: ${{ env.ISSUE_URL }}",
+              "text": "TSE Review Requested: <${{ env.ISSUE_TITLE }}|${{ env.ISSUE_URL }}>",
               "blocks": [
                 {
                   "type": "section",
