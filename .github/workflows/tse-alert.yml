@@ -14,25 +14,25 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
-          # We use toJSON() to automatically handle quotes in the title.
-          # Note: We do NOT put quotes around ${{ toJSON(...) }} because it provides them.
           payload: |
             {
               "text": "TSE Review Requested: ${{ github.event.issue.html_url }}",
               "blocks": [
                 {
-                  "type": "header",
+                  "type": "section",
                   "text": {
-                    "type": "plain_text",
-                    "text": ${{ toJSON(format('Review: {0}', github.event.issue.title)) }},
-                    "emoji": true
+                    "type": "mrkdwn",
+                    "text": ":rotating_light: *TSE Review Requested* <!subteam^S0A12AJGEMU>"
                   }
+                },
+                {
+                  "type": "divider"
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "<!subteam^S0A12AJGEMU> a new review has been requested."
+                    "text": "*Issue:* <${{ github.event.issue.html_url }}|${{ toJSON(github.event.issue.title) }}>"
                   }
                 },
                 {
@@ -46,17 +46,7 @@ jobs:
                       "type": "mrkdwn",
                       "text": "*Author:*\n${{ github.event.issue.user.login }}"
                     }
-                  ],
-                  "accessory": {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "View Issue",
-                      "emoji": true
-                    },
-                    "url": "${{ github.event.issue.html_url }}",
-                    "action_id": "button-action"
-                  }
+                  ]
                 }
               ]
             }
