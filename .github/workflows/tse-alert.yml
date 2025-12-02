@@ -32,9 +32,6 @@ jobs:
                   }
                 },
                 {
-                  "type": "divider"
-                },
-                {
                   "type": "section",
                   "fields": [
                     {
