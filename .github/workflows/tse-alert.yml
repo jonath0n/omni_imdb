@@ -6,30 +6,29 @@ on:
 
 jobs:
   notify_slack:
-    # Only run if the specific label was added
     if: github.event.label.name == 'tse_review'
     runs-on: ubuntu-latest
     steps:
       - name: Create Slack Payload
         id: slack_payload
         env:
-          # 1. UPDATE YOUR GROUP ID HERE
+          # Your Group ID (Already correct based on your screenshot)
           GROUP_ID: "S0A12AJGEMU" 
-          # Pulling data from GitHub event
           ISSUE_URL: ${{ github.event.issue.html_url }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           USER_LOGIN: ${{ github.event.issue.user.login }}
         run: |
-          # We use jq to build the JSON object. 
-          # This is much safer than string concatenation because it handles 
-          # escaping quotes/special characters in the title automatically.
+          # 1. We assume the title might have special characters, so we escape them for JSON
+          # 2. We construct the payload using jq
+          
           jq -n \
             --arg group "$GROUP_ID" \
             --arg title "$ISSUE_TITLE" \
             --arg url "$ISSUE_URL" \
             --arg user "$USER_LOGIN" \
             '{
-              text: "<!subteam^\($group)> Review Requested: \($title)",
+              # ADDED THE LINK SYNTAX HERE: <\($url)|\($title)>
+              text: "<!subteam^\($group)> Review Requested: <\($url)|\($title)>",
               blocks: [
                 {
                   type: "section",
@@ -53,5 +52,4 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
-          # Read the safe JSON file we just created
           payload-file-path: "./payload.json"
