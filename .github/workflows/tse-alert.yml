@@ -41,11 +41,11 @@ jobs:
                     {
                       "type": "mrkdwn",
                       "text": "*Author:*\n${{ env.AUTHOR }}"
-                    },
-                    {
-                      "type": "divider"
                     }
                   ]
+                },
+                {
+                  "type": "divider"
                 }
               ]
             }
