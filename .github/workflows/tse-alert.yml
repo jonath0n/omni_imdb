@@ -10,29 +10,48 @@ jobs:
     if: github.event.label.name == 'tse_review'
     runs-on: ubuntu-latest
     steps:
+      - name: Create Slack Payload
+        id: slack_payload
+        env:
+          # 1. UPDATE YOUR GROUP ID HERE
+          GROUP_ID: "S0A12AJGEMU" 
+          # Pulling data from GitHub event
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          USER_LOGIN: ${{ github.event.issue.user.login }}
+        run: |
+          # We use jq to build the JSON object. 
+          # This is much safer than string concatenation because it handles 
+          # escaping quotes/special characters in the title automatically.
+          jq -n \
+            --arg group "$GROUP_ID" \
+            --arg title "$ISSUE_TITLE" \
+            --arg url "$ISSUE_URL" \
+            --arg user "$USER_LOGIN" \
+            '{
+              text: "<!subteam^\($group)> Review Requested: \($title)",
+              blocks: [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: ":rotating_light: *TSE Review Requested* <!subteam^\($group)>"
+                  }
+                },
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: "*<\($url)|\($title)>*\nRequested by: \($user)"
+                  }
+                }
+              ]
+            }' > payload.json
+
       - name: Send Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
-          # This special syntax <!subteam^ID> triggers the notification for the group
-          payload: |
-            {
-              "text": "<!subteam^YOUR_GROUP_ID_HERE> Review Requested: ${{ github.event.issue.title }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": ":rotating_light: *TSE Review Requested* <!subteam^S0A12AJGEMU>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*<${{ github.event.issue.html_url }}|${{ github.event.issue.title }}>*\nRequested by: ${{ github.event.issue.user.login }}"
-                  }
-                }
-              ]
-            }
+          # Read the safe JSON file we just created
+          payload-file-path: "./payload.json"
