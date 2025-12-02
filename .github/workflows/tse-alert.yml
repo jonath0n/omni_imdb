@@ -34,29 +34,6 @@ jobs:
                     "type": "mrkdwn",
                     "text": ":rotating_light: *TSE Review Requested* <!subteam^${{ env.GROUP_ID }}>"
                   }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Issue:* <${{ env.ISSUE_URL }}|${{ env.ISSUE_TITLE }}>"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Requested By:*\n${{ env.SENDER }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Author:*\n${{ env.AUTHOR }}"
-                    }
-                  ]
                 }
               ]
             }
