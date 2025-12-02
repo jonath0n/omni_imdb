@@ -9,48 +9,54 @@ jobs:
     if: github.event.label.name == 'tse_review'
     runs-on: ubuntu-latest
     steps:
-      - name: Create Slack Payload
-        id: slack_payload
-        env:
-          GROUP_ID: "S0A12AJGEMU"
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          # The person who created the issue
-          AUTHOR_LOGIN: ${{ github.event.issue.user.login }}
-          # The person who added the label (The "Sender")
-          REVIEW_REQUESTER: ${{ github.event.sender.login }}
-        run: |
-          jq -n \
-            --arg group "$GROUP_ID" \
-            --arg title "$ISSUE_TITLE" \
-            --arg url "$ISSUE_URL" \
-            --arg author "$AUTHOR_LOGIN" \
-            --arg requester "$REVIEW_REQUESTER" \
-            '{
-              # Link is added here for the fallback text
-              text: "<!subteam^\($group)> Review Requested: <\($url)|\($title)>",
-              blocks: [
-                {
-                  type: "section",
-                  text: {
-                    type: "mrkdwn",
-                    text: ":rotating_light: *TSE Review Requested* <!subteam^\($group)>"
-                  }
-                },
-                {
-                  type: "section",
-                  text: {
-                    type: "mrkdwn",
-                    # Showing both the issue author and who asked for the review
-                    text: "*<\($url)|\($title)>*\nIssue Author: \($author)\nReview Requested by: \($requester)"
-                  }
-                }
-              ]
-            }' > payload.json
-
       - name: Send Slack Notification
         uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
-          payload-file-path: "./payload.json"
+          # We use toJSON() to automatically handle quotes in the title.
+          # Note: We do NOT put quotes around ${{ toJSON(...) }} because it provides them.
+          payload: |
+            {
+              "text": "TSE Review Requested: ${{ github.event.issue.html_url }}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ${{ toJSON(format('Review: {0}', github.event.issue.title)) }},
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "<!subteam^S0A12AJGEMU> a new review has been requested."
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Requested By:*\n${{ github.event.sender.login }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n${{ github.event.issue.user.login }}"
+                    }
+                  ],
+                  "accessory": {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View Issue",
+                      "emoji": true
+                    },
+                    "url": "${{ github.event.issue.html_url }}",
+                    "action_id": "button-action"
+                  }
+                }
+              ]
+            }
